@@ -1,3 +1,5 @@
 {
-    "markdown.extension.print.absoluteImgPath": false
+    "markdown.extension.print.absoluteImgPath": false,
+    "workbench.editor.enablePreview": true,
+    "editor.rename.enablePreview": false
 }
