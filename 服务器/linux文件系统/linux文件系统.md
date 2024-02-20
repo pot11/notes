@@ -1,4 +1,6 @@
+
 #### 【Linux】~、/home与/root的区别
+
 1. ~ 是用户的主目录, root用户的主目录是/root，普通用户的主目录是“/home/普通用户名”  
 在root用户下，~等同于/root  
 ![](./image.png)  
