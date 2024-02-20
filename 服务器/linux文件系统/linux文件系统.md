@@ -1,11 +1,11 @@
 #### 【Linux】~、/home与/root的区别
 1. ~ 是用户的主目录, root用户的主目录是/root，普通用户的主目录是“/home/普通用户名”  
 在root用户下，~等同于/root  
-![](image/image.png)  
-![](image/image-1.png)
+![](./image.png)  
+![](.//image-1.png)
 2. 在普通用户下，~ 等同于  /home/当前的普通用户名  
-   ![Alt text](image/image-2.png)  
-   ![Alt text](image/image-3.png)  
+   ![Alt text](./image-2.png)  
+   ![Alt text](./image-3.png)  
    如果我们建立一个用户，用户名是"xx",那么在/home目录下就有一个对应的/home/xx路径，用来存放用户的主目录。
 root是管理员账号，root文件夹是管理员的主目录，它的配置文件还有root的一些别的东西放在这里。而home是给普通用户的，在home下面有用户名对应的文件夹，这些个文件夹就相当于root文件夹，用来存放对应用户的一些资料，配置。 
 #### Linux 软件安装到 /usr，/usr/local/ 还是 /opt 目录？
