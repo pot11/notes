@@ -4,6 +4,4 @@
 
 10:49
 
- 
-
 clinic/diagnosis/insert
