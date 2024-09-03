@@ -6,10 +6,13 @@
 下载安装包（选择macOS 安装包 (.pkg)：下载 ```https://nodejs.cn/download```
 直接点击下载包一直无脑点下一步安装,查看版本号，检测是否安装成功：node -v npm -v
 
-- 安装cnpm：  
+- 安装cnpm并更换为淘宝源：  
 
 ```script
+临时：
 npm install -g cnpm --registry=https://registry.npmmirror.com
+永久：
+npm config set registry https://registry.npmmirror.com
 ```
 
 同样是通过查看版本号查看安装状态：cnpm -v  
