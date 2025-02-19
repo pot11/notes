@@ -16,5 +16,7 @@ WHERE
 ```sql
 update wechat_mini_program_account_operator_extend_field  set visible = 0 where extend_field_name='phone';
 
+update wechat_mini_program_account_operator_extend_field  set required = 0 where extend_field_name='memberCode';
+
 ```
 
