@@ -94,8 +94,10 @@ sudo systemctl restart docker
         gcc --version  # 确认输出类似"gcc (GCC) 4.8.5"
         ```
         **5. 安装docker-compose**
-        sudo yum install -y python3-pip
+        ```shell
+        sudo yum install -y python3-pip  
         sudo pip3 install docker-compose
+        ```
 
 ```
 
