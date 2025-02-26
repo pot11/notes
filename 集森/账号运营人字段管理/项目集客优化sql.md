@@ -20,3 +20,16 @@ update wechat_mini_program_account_operator_extend_field  set required = 0 where
 
 ```
 
+## 平台集客表数据处理
+
+```sql
+UPDATE wechat_mini_program_account_operator AS ao
+JOIN wechat_mini_program_user AS user
+  ON ao.user_id = user.user_id
+SET
+  ao.wechat_avatar = user.wechat_avatar,
+  ao.wechat_nickname = user.wechat_nickname
+WHERE
+  ao.del_flag = 0
+  AND user.del_flag = 0;
+```
