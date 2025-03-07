@@ -2,8 +2,7 @@
 
 以下是2025年阿里云ECS CentOS 7.9安装Docker和Docker Compose的最新教程：
 
-
-### **一、安装Docker**
+## **一、安装Docker**
 
 1. **卸载旧版本（如存在）**
 
@@ -11,39 +10,39 @@
 sudo yum remove docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-engine
 ```
 
-1. **安装依赖工具**
+2. **安装依赖工具**
 
 ```bash
 sudo yum install -y yum-utils device-mapper-persistent-data lvm2
 ```
 
-2. **配置阿里云镜像源**
+3. **配置阿里云镜像源**
 
 ```bash
 sudo yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
 ```
 
-3. **安装Docker CE**
+4. **安装Docker CE**
 
 ```bash
 sudo yum install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin
 ```
 
-4. **启动Docker并设置开机自启**
+5. **启动Docker并设置开机自启**
 
 ```bash
 sudo systemctl start docker
 sudo systemctl enable docker
 ```
 
-5. **验证安装**
+6. **验证安装**
 
 ```bash
 sudo docker version
 sudo docker run hello-world  # 测试容器运行
 ```
 
-6. **配置镜像加速器（推荐）**
+7. **配置镜像加速器（推荐）**
 
 ```bash
 sudo tee /etc/docker/daemon.json <<-'EOF'
@@ -89,11 +88,13 @@ sudo systemctl restart docker
         ```
 
          **4. 验证GCC环境**
-        
+
         ```bash
         gcc --version  # 确认输出类似"gcc (GCC) 4.8.5"
         ```
+
         **5. 安装docker-compose**
+
         ```shell
         sudo yum install -y python3-pip  
         sudo pip3 install docker-compose
