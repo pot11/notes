@@ -8,4 +8,3 @@
 ```shell
 OllamaSetup.exe /DIR=C:\develop\ollama
 ```
-
