@@ -671,118 +671,113 @@ private UserService userService;
 
 Dubbo 的调用原理与动态代理密切相关，动态代理是实现透明化远程调用的核心技术之一。以下是 Dubbo 调用原理的详细解释，包括动态代理的作用及其在整体架构中的位置：
 
-1. 核心概念与架构
+------
+
+### **1. 核心概念与架构**
+
 Dubbo 的架构分为以下几个核心层次：
 
-服务接口层（Service）：定义服务接口，供提供者实现和消费者调用。
+1. **服务接口层（Service）**：定义服务接口，供提供者实现和消费者调用。
+2. **配置层（Config）**：管理 Dubbo 的配置（如 `@Service`、`@Reference` 注解）。
+3. **代理层（Proxy）**：生成服务接口的代理对象，拦截本地方法调用并转发到远程。
+4. **注册中心层（Registry）**：服务注册与发现。
+5. **路由层（Cluster）**：负载均衡、容错、路由策略。
+6. **协议层（Protocol）**：定义 RPC 协议（如 Dubbo 协议、HTTP 协议）。
+7. **传输层（Transport）**：网络通信（如 Netty、Mina）。
+8. **序列化层（Serialize）**：数据序列化与反序列化（如 Hessian、JSON）。
 
-配置层（Config）：管理 Dubbo 的配置（如 @Service、@Reference 注解）。
+------
 
-代理层（Proxy）：生成服务接口的代理对象，拦截本地方法调用并转发到远程。
+### **2. 动态代理的核心作用**
 
-注册中心层（Registry）：服务注册与发现。
+动态代理在 Dubbo 消费者端扮演了关键角色，**将本地接口调用透明地转换为远程调用**。以下是具体实现步骤：
 
-路由层（Cluster）：负载均衡、容错、路由策略。
+#### **(1) 生成代理对象**
 
-协议层（Protocol）：定义 RPC 协议（如 Dubbo 协议、HTTP 协议）。
+- **触发时机**：当消费者通过 `@Reference` 注解引用一个远程服务时，Dubbo 的扩展机制会生成该接口的代理对象。
 
-传输层（Transport）：网络通信（如 Netty、Mina）。
+- **代理实现方式**：
 
-序列化层（Serialize）：数据序列化与反序列化（如 Hessian、JSON）。
+  - **JDK 动态代理**：基于接口生成代理，要求服务必须有接口。
+  - **Javassist 动态代理**：Dubbo 默认使用 Javassist 字节码技术生成代理，性能更高且不依赖接口。
 
-2. 动态代理的核心作用
-动态代理在 Dubbo 消费者端扮演了关键角色，将本地接口调用透明地转换为远程调用。以下是具体实现步骤：
+- **代码示例**：
 
-(1) 生成代理对象
-触发时机：当消费者通过 @Reference 注解引用一个远程服务时，Dubbo 的扩展机制会生成该接口的代理对象。
+  java
 
-代理实现方式：
+  复制
 
-JDK 动态代理：基于接口生成代理，要求服务必须有接口。
+  ```
+  // 消费者代码
+  @Reference
+  private UserService userService; // 实际注入的是代理对象
+  ```
 
-Javassist 动态代理：Dubbo 默认使用 Javassist 字节码技术生成代理，性能更高且不依赖接口。
+#### **(2) 拦截方法调用**
 
-代码示例：
-
-java
-复制
-// 消费者代码
-@Reference
-private UserService userService; // 实际注入的是代理对象
-(2) 拦截方法调用
 代理对象会拦截所有方法调用，执行以下逻辑：
 
-构造调用信息（Invocation）：
+1. **构造调用信息（Invocation）**：
+   - 方法名、参数类型、参数值。
+   - 服务分组（Group）、版本（Version）等元数据。
+2. **选择调用器（Invoker）**：
+   - 通过路由层（Cluster）选择一个可用的服务提供者。
+   - 应用负载均衡策略（如随机、轮询）。
+3. **网络通信**：
+   - 通过协议层（Protocol）将调用信息序列化。
+   - 使用传输层（Transport）发送请求到服务提供者。
+4. **处理响应**：
+   - 接收提供者的响应数据，反序列化为 Java 对象。
+   - 返回结果给消费者，或抛出异常（如超时、服务不可用）。
 
-方法名、参数类型、参数值。
+------
 
-服务分组（Group）、版本（Version）等元数据。
+### **3. 动态代理与 Dubbo 组件协作**
 
-选择调用器（Invoker）：
-
-通过路由层（Cluster）选择一个可用的服务提供者。
-
-应用负载均衡策略（如随机、轮询）。
-
-网络通信：
-
-通过协议层（Protocol）将调用信息序列化。
-
-使用传输层（Transport）发送请求到服务提供者。
-
-处理响应：
-
-接收提供者的响应数据，反序列化为 Java 对象。
-
-返回结果给消费者，或抛出异常（如超时、服务不可用）。
-
-3. 动态代理与 Dubbo 组件协作
 以下是动态代理在 Dubbo 调用链中的具体协作流程：
 
-步骤 1：代理对象生成
-组件：ProxyFactory（代理工厂）。
+#### **步骤 1：代理对象生成**
 
-实现类：JavassistProxyFactory（默认）或 JdkProxyFactory。
+- **组件**：`ProxyFactory`（代理工厂）。
+- **实现类**：`JavassistProxyFactory`（默认）或 `JdkProxyFactory`。
+- **作用**：根据服务接口生成代理对象，并绑定到消费者代码中。
 
-作用：根据服务接口生成代理对象，并绑定到消费者代码中。
+#### **步骤 2：方法拦截与调用链构造**
 
-步骤 2：方法拦截与调用链构造
-组件：Invoker（调用器）。
+- **组件**：`Invoker`（调用器）。
+- **流程**：
+  1. 代理对象将方法调用封装为 `Invocation`。
+  2. 调用链经过过滤器（Filter），如日志、权限校验。
+  3. 路由层（Cluster）选择一个具体的 `Invoker`（代表一个远程服务提供者）。
 
-流程：
+#### **步骤 3：网络通信与序列化**
 
-代理对象将方法调用封装为 Invocation。
+- **组件**：`Protocol`（协议）、`Codec`（编解码器）、`Transporter`（传输）。
+- **流程**：
+  - `Protocol` 将 `Invocation` 序列化为二进制数据（如 Dubbo 协议的报文）。
+  - `Transporter`（如 Netty）发送数据到服务提供者。
+  - 提供者反序列化请求，执行本地方法，返回结果。
 
-调用链经过过滤器（Filter），如日志、权限校验。
+#### **步骤 4：结果处理**
 
-路由层（Cluster）选择一个具体的 Invoker（代表一个远程服务提供者）。
+- **组件**：`Result`（结果包装器）。
+- **流程**：
+  - 消费者接收响应数据，反序列化为 `Result` 对象。
+  - 返回结果或抛出异常（如 `RpcException`）。
 
-步骤 3：网络通信与序列化
-组件：Protocol（协议）、Codec（编解码器）、Transporter（传输）。
+------
 
-流程：
+### **4. 动态代理的代码级实现**
 
-Protocol 将 Invocation 序列化为二进制数据（如 Dubbo 协议的报文）。
+以 Dubbo 默认的 `JavassistProxyFactory` 为例，其核心逻辑如下：
 
-Transporter（如 Netty）发送数据到服务提供者。
+#### **(1) 生成代理类**
 
-提供者反序列化请求，执行本地方法，返回结果。
-
-步骤 4：结果处理
-组件：Result（结果包装器）。
-
-流程：
-
-消费者接收响应数据，反序列化为 Result 对象。
-
-返回结果或抛出异常（如 RpcException）。
-
-4. 动态代理的代码级实现
-以 Dubbo 默认的 JavassistProxyFactory 为例，其核心逻辑如下：
-
-(1) 生成代理类
 java
+
 复制
+
+```
 public class JavassistProxyFactory implements ProxyFactory {
     @Override
     public <T> T getProxy(Invoker<T> invoker, Class<?>[] interfaces) {
@@ -790,9 +785,15 @@ public class JavassistProxyFactory implements ProxyFactory {
         return (T) Proxy.getProxy(interfaces).newInstance(new InvokerInvocationHandler(invoker));
     }
 }
-(2) 方法拦截器（InvokerInvocationHandler）
+```
+
+#### **(2) 方法拦截器（InvokerInvocationHandler）**
+
 java
+
 复制
+
+```
 public class InvokerInvocationHandler implements InvocationHandler {
     private final Invoker<?> invoker;
 
@@ -804,40 +805,59 @@ public class InvokerInvocationHandler implements InvocationHandler {
         return invoker.invoke(invocation).recreate();
     }
 }
-5. 动态代理与高级特性
-(1) 异步调用
-实现方式：代理对象返回 CompletableFuture，调用实际异步执行。
+```
 
-示例：
+------
 
-java
-复制
-@Reference(async = true)
-private UserService userService;
+### **5. 动态代理与高级特性**
 
-CompletableFuture<User> future = userService.getUserByIdAsync(1);
-(2) 泛化调用
-实现方式：通过 GenericService 接口动态调用任意方法，无需依赖服务接口。
+#### **(1) 异步调用**
 
-示例：
+- **实现方式**：代理对象返回 `CompletableFuture`，调用实际异步执行。
 
-java
-复制
-GenericService genericService = (GenericService) applicationContext.getBean("userService");
-Object result = genericService.$invoke("getUserById", new String[]{"java.lang.Long"}, new Object[]{1L});
-6. 动态代理的性能优化
-字节码生成优化：Javassist 生成的代理类直接操作字节码，避免了反射调用开销。
+- **示例**：
 
-缓存代理对象：同一服务接口的代理对象会被复用，减少生成开销。
+  java
 
-减少序列化成本：通过高效的序列化协议（如 Hessian2、Kryo）降低网络传输耗时。
+  复制
 
-7. 总结
-动态代理是 Dubbo 透明化远程调用的基石：通过生成代理对象，将本地方法调用转化为远程 RPC 请求。
+  ```
+  @Reference(async = true)
+  private UserService userService;
+  
+  CompletableFuture<User> future = userService.getUserByIdAsync(1);
+  ```
 
-协作组件：代理层与路由、协议、传输等模块协同工作，完成负载均衡、序列化、网络通信等核心功能。
+#### **(2) 泛化调用**
 
-性能与灵活性的平衡：Javassist 动态代理在性能和灵活性之间取得平衡，支持异步、泛化等高级特性。
+- **实现方式**：通过 `GenericService` 接口动态调用任意方法，无需依赖服务接口。
+
+- **示例**：
+
+  java
+
+  复制
+
+  ```
+  GenericService genericService = (GenericService) applicationContext.getBean("userService");
+  Object result = genericService.$invoke("getUserById", new String[]{"java.lang.Long"}, new Object[]{1L});
+  ```
+
+------
+
+### **6. 动态代理的性能优化**
+
+- **字节码生成优化**：Javassist 生成的代理类直接操作字节码，避免了反射调用开销。
+- **缓存代理对象**：同一服务接口的代理对象会被复用，减少生成开销。
+- **减少序列化成本**：通过高效的序列化协议（如 Hessian2、Kryo）降低网络传输耗时。
+
+------
+
+### **7. 总结**
+
+- **动态代理是 Dubbo 透明化远程调用的基石**：通过生成代理对象，将本地方法调用转化为远程 RPC 请求。
+- **协作组件**：代理层与路由、协议、传输等模块协同工作，完成负载均衡、序列化、网络通信等核心功能。
+- **性能与灵活性的平衡**：Javassist 动态代理在性能和灵活性之间取得平衡，支持异步、泛化等高级特性。
 
 通过动态代理，Dubbo 实现了对开发者透明的远程调用，使得分布式服务调用如同本地方法调用一样简单，同时保持了高性能和可扩展性。
 
