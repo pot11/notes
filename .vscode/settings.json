@@ -1,5 +1,6 @@
 {
     "markdown.extension.print.absoluteImgPath": false,
-    "workbench.editor.enablePreview": true,
-    "editor.rename.enablePreview": false
+    "workbench.editor.enablePreview": false,
+    "editor.rename.enablePreview": false,
+    "multiDiffEditor.experimental.enabled": true
 }
