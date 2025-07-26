@@ -2,5 +2,6 @@
     "markdown.extension.print.absoluteImgPath": false,
     "workbench.editor.enablePreview": false,
     "editor.rename.enablePreview": false,
-    "multiDiffEditor.experimental.enabled": true
+    "multiDiffEditor.experimental.enabled": true,
+    "python.REPL.enableREPLSmartSend": false
 }
