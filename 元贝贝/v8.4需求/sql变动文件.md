@@ -54,14 +54,23 @@ alter table spec_user_use_sku_record
     add amount int null comment '原价(单位: 分)' after payAmount;
 
 alter table spec_user_use_sku_record
-    add icon varchar(256) null comment '权益图标ICON' after amount;
+    add user_package_sku_icon varchar(256) null comment '用户权益图标ICON' after amount;
 
 alter table spec_user_use_sku_record
-    add sku_name varchar(256) null comment '用户套餐权益名称（快照）' after icon;
+    add user_package_sku_name varchar(256) null comment '用户套餐权益名称' after user_package_sku_icon; 
 ```
 
 ```sql
 -- 用户单独购买权益订单表
 alter table spec_user_purchase_sku_order
     add used_flag tinyint default 0 null comment '权益已使用标识(默认未使用)';
+```
+
+```sql
+-- 问诊详情表新增字段
+alter table pt_inquiry_order_detail
+    add user_package_sku_icon varchar(256) null comment '用户权益图标ICON' after pay_amount;
+
+alter table pt_inquiry_order_detail
+    add user_package_sku_name varchar(256) null comment '用户套餐权益名称' after user_package_sku_icon;
 ```
