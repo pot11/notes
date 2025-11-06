@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket聊天客户端</title>
+</head>
+<body>
+    <div>
+        <input type="text" id="messageInput" placeholder="输入消息...">
+        <button onclick="sendMessage()">发送</button>
+    </div>
+    <div id="messageArea" style="margin-top: 20px;"></div>
+
+    <script>
+        // 创建WebSocket连接
+        const socket = new WebSocket("ws://localhost:8080/chat2");
+        
+        // 连接建立时的处理
+        socket.onopen = function(event) {
+            displayMessage("系统", "已连接到聊天室");
+        };
+        
+        // 接收消息的处理
+        socket.onmessage = function(event) {
+            displayMessage("服务器", event.data);
+        };
+        
+        // 连接关闭时的处理
+        socket.onclose = function(event) {
+            displayMessage("系统", "连接已断开");
+        };
+        
+        // 错误处理
+        socket.onerror = function(error) {
+            console.error("WebSocket错误:", error);
+        };
+        
+        // 发送消息
+        function sendMessage() {
+            const input = document.getElementById("messageInput");
+            if (input.value.trim() !== "") {
+                socket.send(input.value);
+                input.value = "";
+            }
+        }
+        
+        // 显示消息
+        function displayMessage(sender, message) {
+            const messageArea = document.getElementById("messageArea");
+            const messageElement = document.createElement("div");
+            messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
+            messageArea.appendChild(messageElement);
+        }
+        
+        // 支持按Enter键发送
+        document.getElementById("messageInput")
+            .addEventListener("keypress", function(event) {
+                if (event.key === "Enter") {
+                    sendMessage();
+                }
+            });
+    </script>
+</body>
+</html>
