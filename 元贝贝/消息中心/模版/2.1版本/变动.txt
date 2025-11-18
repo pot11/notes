@@ -5,7 +5,7 @@
 2. 计划通知
     1. pt_plan_0000001
     2. 您好，${doctorName}医生提醒${patientName}的${planContent}，请打开元骁健康小程序查看详情
-    3. SMS_498105401
+    3. SMS_498445133
 3. 通话提醒（去掉短信变量patientname）
     1. pt_inquiry_0000003
     2. SMS_498325400
