@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSE 消息接收测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .connected { background-color: #d4edda; color: #155724; }
+        .disconnected { background-color: #f8d7da; color: #721c24; }
+        .message { padding: 5px; margin: 5px 0; border-left: 3px solid #007bff; }
+        button { padding: 8px 16px; margin: 5px; cursor: pointer; }
+        #messages { height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>SSE 消息接收测试</h1>
+
+    <div id="connectionStatus" class="status disconnected">未连接</div>
+
+    <div>
+        <button id="connectBtn">建立连接</button>
+        <button id="disconnectBtn">断开连接</button>
+    </div>
+
+    <h3>接收的消息:</h3>
+    <div id="messages"></div>
+</div>
+
+<script src="sse-client.js"></script>
+</body>
+</html>
