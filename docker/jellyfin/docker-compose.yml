@@ -1,0 +1,20 @@
+services:
+  jellyfin:
+    image: crpi-v1n4esosl3b1xvpt.cn-hangzhou.personal.cr.aliyuncs.com/aliyun_image_20251211/linux_arm64_jellyfin:latest-rockchip
+    container_name: jellyfin
+    restart: unless-stopped
+    environment:
+      - PUID=0                              # 使用root用户以确保硬件驱动权限，或根据你的用户ID调整
+      - PGID=0
+      - TZ=Asia/Shanghai
+    volumes:
+      - /vol1/1000/jellyfin/config:/config  # 配置文件夹路径
+      - /vol1/1000/jellyfin/cache:/cache    # 缓存文件夹路径
+      - /vol1/1000/jellyfin/media:/media    # 媒体库文件夹路径
+    devices:
+      - /dev/dri:/dev/dri # 挂载Intel或AMD GPU驱动，用于硬件解码
+    # 如果你需要科学上网刮削元数据，可以取消下面两行的注释并填写你的代理地址
+    # environment:
+    #   - http_proxy=http://your-proxy-ip:port
+    #   - https_proxy=http://your-proxy-ip:port
+    network_mode: host   # 使用主机网络
