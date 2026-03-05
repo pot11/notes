@@ -1,0 +1,53 @@
+# transmission
+
+# 1.brigge模式
+
+version: "3.8"
+services:
+  transmission:
+    image: lscr.io/linuxserver/transmission:latest
+    container_name: transmission
+    restart: unless-stopped
+    ports:
+      # Web UI 管理端口
+      - "9091:9091"
+      # BT 数据传输端口（TCP 和 UDP）- 如需外网连接请确保路由器转发此端口
+      - "51413:51413"
+      - "51413:51413/udp"
+    environment:
+      # 用户和组ID，用于文件权限（运行 id 命令查看你的 uid:gid）
+      - PUID=1000
+      - PGID=1000
+      # 时区
+      - TZ=Asia/Shanghai
+      # Web UI 登录凭据（请务必修改！）
+      - USER=admin
+      - PASS=change_this_password
+    volumes:
+      # 配置文件目录 （存放 Transmission 的配置文件（如 settings.json））
+      - ./config:/config
+      # 下载目录（可挂载你的媒体库路径）
+      - ./downloads:/downloads
+      # 直接挂载到 Jellyfin 的媒体目录
+      # - /vol1/1000/media/downloads:/downloads  
+      # 监控目录：放入 .torrent 文件自动开始下载
+      - ./watch:/watch
+
+
+# 2.host模式
+# services:
+#   transmission:
+#     image: lscr.io/linuxserver/transmission:latest
+#     container_name: transmission
+#     restart: unless-stopped
+#     network_mode: host                # 使用 host 网络模式
+#     environment:
+#       - PUID=1000                     # 替换为你的用户ID（执行 id 命令查看）
+#       - PGID=1000                     # 替换为你的组ID
+#       - TZ=Asia/Shanghai
+#       - USER=admin                    # Web UI 登录用户名（请修改）
+#       - PASS=change_this_password     # Web UI 登录密码（务必修改）
+#     volumes:
+#       - ./config:/config               # 配置文件目录
+#       - ./downloads:/downloads         # 下载文件保存目录
+#       - ./watch:/watch                 # 种子监控目录
