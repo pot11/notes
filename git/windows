@@ -1,0 +1,4 @@
+# windows上初始化
+
+git config --global user.name "pot11"
+git config --global user.email "persistpot@gmail.com"
