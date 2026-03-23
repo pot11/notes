@@ -1,0 +1,17 @@
+services:
+  qbittorrent:
+    image: linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    network_mode: host          # 关键：使用 host 网络
+    environment:
+      - PUID=1000               # 你的用户 ID
+      - PGID=1000               # 你的组 ID
+      - TZ=Asia/Shanghai
+      - UMASK_SET=022
+      - WEBUI_PORT=8085         # WebUI 端口（直接监听主机）
+      - TORRENTING_PORT=26881   # BT 监听端口（直接监听主机）
+    volumes:
+      - ./config:/config        # 配置文件目录
+      # - /vol1/1000/downloads:/downloads   # 下载目录，按实际修改
+      - /vol1/1000/jellyfin/media   # 下载目录，按实际修改
+    restart: unless-stopped
